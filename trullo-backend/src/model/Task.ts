@@ -1,33 +1,45 @@
-import mongoose, { Schema, HydratedDocument } from "mongoose";
+import mongoose, { Schema, HydratedDocument, InferSchemaType } from "mongoose";
 
 
-interface TaskInterface {
-    title: String,
-    description: String,
-    status: 'to-do' | 'in progress' | 'blocked' | 'done',
-    assignedTo: typeof Schema.Types.ObjectId
-    finishedAt: Date | null
-}
-
-
-
-const taskSchema = new Schema<TaskInterface>(
+const taskSchema = new Schema(
     {
         title: {type: String, required: true, trim: true},
         description: {type: String, required: true},
         status: {type: String, enum: ['to-do','in progress','blocked','done'], required: true },
         assignedTo: {type: Schema.ObjectId, default: null, required: true},
-        finishedAt: {type: Date, default: null},
+        finishedAt: {type: Schema.Types.Mixed, default: null},
     },
     { timestamps: true, collection: "tasks" }
 );
 
-taskSchema.path("finishedAt").validate(function (
-    this: HydratedDocument<TaskInterface>,
-    value: Date | null
-  ) {
-    if (this.status_enum === "done") return value instanceof Date;
-    return value == null;
-  }, "finishedAt måste vara satt om status är 'done', annars null");
+taskSchema.pre('validate', function (next) {
+  if (this.status === 'done') {
+    if (!this.finishedAt) this.finishedAt = new Date(); 
+  } else {
+    this.finishedAt = null; 
+  }
+  next();
+});
 
+taskSchema.pre('findOneAndUpdate', function (next) {
+  const u: any = this.getUpdate() || {};
+  const set = (u.$set ??= {});
+  const status = set.status ?? u.status;
+
+  if (status === undefined) return next();
+
+  if (status === 'done') {
+    if (set.finishedAt === undefined && u.finishedAt === undefined) {
+      set.finishedAt = new Date();
+    }
+    if (u.$unset) delete u.$unset.finishedAt;
+  } else {
+    set.finishedAt = null;
+  }
+
+  next();
+});
+
+  
+export type TaskInterface = InferSchemaType<typeof taskSchema>
 export const Task = mongoose.model("Task", taskSchema, "tasks");
