@@ -20,8 +20,10 @@ Dotenv använder jag för säkerhet. Att kunna gömma databas-strängar eller da
 env-variabler:
 
 ```json
-MONGODB_URI="CONNECTION-STRING"
-DB_NAME="DATABASE NAME"
+MONGODB_URI=CONNECTION-STRING
+DB_NAME=DATABASE NAME
+JWT_SECRET=RANDOM JWT STRING
+NODE_ENV=development
 ```
 
 Appen är väldigt simpel just nu. Du kan köra den med "npm run dev" så startar servern. Sen går du in på Thunderclient eller liknande applikationer (Postman, Insomnia etc) och kan köra olika routes. 
@@ -41,6 +43,22 @@ Exempel på User:
     "password":"mypassword123"
 }
 ```
+
+Har lagt till en authentication middleware som gör att du måste vara inloggad för att göra något alls med tasks. Så du är "låst" från tasks om du inte är inloggad och du kan bara hämta den inloggades tasks. Du loggar in med  email och password:
+
+http//:localhost:3000/users/login för login
+
+```json
+{
+    "email":"test@test.com",
+    "password":"mypassword123"
+}
+```
+
+Thunderclient i VScode hade inget bra sätt att hantera cookies så var tvungen att lägga till en logout också för att rensa cookien:
+
+http//:localhost:3000/users/logout
+
 När du skapar en Task så ska du ha en title, description, status (som är en enum, tar bara emot "to-do", "in progress", "blocked", "done"), assignedTo som tar emot ett id från databasen och finishedAt som uppdateras med hjälp av middlewares.
 
 Exempel på Task:
@@ -66,5 +84,13 @@ http//:localhost:3000/tasks/:id
 ```
 
 Har även lagt till timestamps på både User och Task schemas så att de får en createdAt och updatedAt. 
+
+Har lagt till en seedfil med hjälp av ChatGpt, kör den med kommandot:
+
+```json
+{
+    npm run seed
+}
+```
 
 Testa gärna runt!
