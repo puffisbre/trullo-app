@@ -55,6 +55,8 @@ http//:localhost:3000/users/login för login
 }
 ```
 
+Du kan lägga en task på en annan user och updatera en taks, men du kommer inte åt och se andras tasks när den väl är skapad så det är inte helt perfekt, men på god väg.
+
 Thunderclient i VScode hade inget bra sätt att hantera cookies så var tvungen att lägga till en logout också för att rensa cookien:
 
 http//:localhost:3000/users/logout
