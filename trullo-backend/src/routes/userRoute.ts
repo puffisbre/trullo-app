@@ -3,6 +3,10 @@ import userCrud from '../dbCrud/userCrud.ts'
 import bcrypt from "bcrypt";
 import {UserInterface} from '../model/User';
 import {User} from '../model/User.ts'
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 
 const router = express.Router();
@@ -11,6 +15,17 @@ interface ErrorResponse {
   message: string;
   error: string;
 }
+
+interface LoginError{
+  message: string
+}
+
+interface LoginSuccess { 
+  userId: string; 
+  email: string; 
+  token: string 
+};
+type LoginResponse = { data: LoginSuccess } | LoginError;
 
 router.get("/", async (req: Request, res: Response<UserInterface[] | ErrorResponse>) => {
 try {
@@ -49,6 +64,52 @@ router.post("/", async (req: Request, res: Response<UserInterface | ErrorRespons
     return res.status(400).json({message:"Couldn't create user", error: errorMessage});
   }
 })
+
+router.post("/login", async (req: Request, res: Response<LoginResponse>) => {
+  try {
+    const {email, password} = req.body;
+    let exsistingUser = await User.findOne({email}).select("+password");
+    if(!exsistingUser){
+        return res.status(404).json({message:"User not found"});
+    }
+
+       const ok = await bcrypt.compare(password, exsistingUser.password);
+      if (!ok) {
+       return res.status(400).json({message:"Couldn't login user"});
+      }
+
+    
+   const token = jwt.sign(
+        { sub: exsistingUser.id, email: exsistingUser.email },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "1h" }
+      );
+
+       
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 1000
+  });
+    return res.status(200).json({
+        data: { userId: exsistingUser.id, email: exsistingUser.email, token }
+      });
+   } catch (error) {
+      return res.status(500).json({
+        message: "Couldn't login user",
+      });
+    }
+})
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production"
+  });
+  return res.status(200).json({ message: "Logged out" });
+});
 
 router.put("/:id", async (req: Request, res: Response<UserInterface | ErrorResponse>)=>{
     try {

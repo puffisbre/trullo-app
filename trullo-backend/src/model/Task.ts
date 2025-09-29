@@ -6,7 +6,7 @@ const taskSchema = new Schema(
         title: {type: String, required: true, trim: true},
         description: {type: String, required: true},
         status: {type: String, enum: ['to-do','in progress','blocked','done'], required: true },
-        assignedTo: {type: Schema.ObjectId, default: null, required: true},
+        assignedTo: {type: Schema.ObjectId, default: null, ref: "User", required: true},
         finishedAt: {type: Schema.Types.Mixed, default: null},
     },
     { timestamps: true, collection: "tasks" }

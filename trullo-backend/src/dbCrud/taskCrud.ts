@@ -1,9 +1,11 @@
 import {Task, TaskInterface} from '../model/Task'
 import {Types} from 'mongoose'
 
-const getTasks = async () => {
-    return Task.find().lean();
-}
+export const getTasks = (userId: string) => Task.find({ assignedTo: userId }).lean();
+
+export const getTasksByUserID = (filter: Record<string, unknown> = {}) => {
+  return Task.find(filter).lean();
+};
 
 const createTask = async (taskData: TaskInterface) => {
     return Task.create(taskData);
@@ -19,4 +21,4 @@ const deleteTask = async (id: string | Types.ObjectId) => {
     return await Task.findByIdAndDelete(id);
 }
 
-export default {getTasks, createTask, updateTask, deleteTask};
+export default {getTasks, createTask, updateTask, deleteTask, getTasksByUserID};
