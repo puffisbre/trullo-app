@@ -12,6 +12,8 @@ const taskSchema = new Schema(
     { timestamps: true, collection: "tasks" }
 );
 
+//Middlewares for checking status. If its done it sets finished at this date. If its not finished its set to null.
+
 taskSchema.pre('validate', function (next) {
   if (this.status === 'done') {
     if (!this.finishedAt) this.finishedAt = new Date(); 
@@ -20,6 +22,8 @@ taskSchema.pre('validate', function (next) {
   }
   next();
 });
+
+//Also middleware, but this one checks when we are updating the task. So it checks if ive changed the status and then updates finished at accordingly.
 
 taskSchema.pre('findOneAndUpdate', function (next) {
   const u: any = this.getUpdate() || {};

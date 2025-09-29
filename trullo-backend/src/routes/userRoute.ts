@@ -2,6 +2,7 @@ import express, {Request, Response} from 'express';
 import userCrud from '../dbCrud/userCrud.ts'
 import bcrypt from "bcrypt";
 import {UserInterface} from '../model/User';
+import {User} from '../model/User.ts'
 
 
 const router = express.Router();
@@ -27,6 +28,11 @@ router.post("/", async (req: Request, res: Response<UserInterface | ErrorRespons
     const {name, email, password} = req.body;
      if(!name || !email || !password){
         throw new Error("Either name, email or password is missing. All is required to post!");
+    }
+
+    let uniqueEmail = await User.findOne({email});
+    if (uniqueEmail) {
+    return res.status(409).json({message:"User with that email is already registered", error: "User with that email is already registered" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const now = new Date();
