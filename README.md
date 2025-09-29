@@ -1,3 +1,4 @@
+
 # Trullo-app av Felix Olsson Stenersjö
 
 ### Motivera ditt val av databas.
@@ -15,6 +16,13 @@ Dotenv använder jag för säkerhet. Att kunna gömma databas-strängar eller da
 
 
 ### Redogör översiktligt hur applikationen fungerar
+
+env-variabler:
+
+```json
+MONGODB_URI="CONNECTION-STRING"
+DB_NAME="DATABASE NAME"
+```
 
 Appen är väldigt simpel just nu. Du kan köra den med "npm run dev" så startar servern. Sen går du in på Thunderclient eller liknande applikationer (Postman, Insomnia etc) och kan köra olika routes. 
 
@@ -58,3 +66,5 @@ http//:localhost:3000/tasks/:id
 ```
 
 Har även lagt till timestamps på både User och Task schemas så att de får en createdAt och updatedAt. 
+
+Testa gärna runt!
