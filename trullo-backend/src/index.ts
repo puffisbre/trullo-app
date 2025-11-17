@@ -9,7 +9,7 @@ import cors from 'cors';
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = parseInt(process.env.PORT || '4000', 10);
 
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -26,8 +26,9 @@ app.use("/tasks", authUser, taskRoutes);
 (async () => {
   try {
     await connectDB();
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+    const host = '0.0.0.0'; // Listen on all interfaces for Docker/Render
+    app.listen(PORT, host, () => {
+      console.log(`Server is running on ${host}:${PORT}`);
     });
   } catch (err) {
     console.error("Failed to start:", err);
