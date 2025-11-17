@@ -36,7 +36,8 @@ app.use(cors({
     
     if (allowedOrigins.includes(origin)) {
       console.log('CORS: Origin allowed:', origin);
-      callback(null, true);
+      // Return the actual origin, not true, to ensure correct header
+      callback(null, origin);
     } else {
       console.log('CORS: Origin NOT allowed:', origin);
       console.log('CORS: Allowed origins are:', allowedOrigins);
@@ -45,7 +46,8 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(cookieParser());
