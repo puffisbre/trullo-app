@@ -36,7 +36,6 @@ const dashboard = () => {
     const handleDragLeave = (e: React.DragEvent) => {
         e.stopPropagation();
         const target = e.currentTarget as HTMLElement;
-        // Only remove if we're actually leaving the element (not just moving to a child)
         const rect = target.getBoundingClientRect();
         const x = e.clientX;
         const y = e.clientY;
@@ -49,7 +48,6 @@ const dashboard = () => {
         e.preventDefault();
         e.stopPropagation();
         
-        // Remove dragOver class from all elements
         const target = e.currentTarget as HTMLElement;
         target.classList.remove(styles.dragOver);
         const column = target.closest(`.${styles.column}`) as HTMLElement;
@@ -63,7 +61,6 @@ const dashboard = () => {
         }
 
         try {
-            // Middleware in backend handles finishedAt automatically based on status
             await updateTask(draggedTask._id, { 
                 status: newStatus
             });

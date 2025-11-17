@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: trullo-backend
+    runtime: docker
+    plan: free
+    rootDir: trullo-backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./trullo-backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+
