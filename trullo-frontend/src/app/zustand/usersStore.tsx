@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { API_BASE_URL } from '../config/api';
 
 export interface User {
   _id: string;
@@ -24,7 +25,7 @@ const usersStore = create<UsersState>((set, get) => ({
   fetchUsers: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch('http://localhost:4000/users', {
+      const response = await fetch(`${API_BASE_URL}/users`, {
         method: 'GET',
         credentials: 'include',
         headers: {

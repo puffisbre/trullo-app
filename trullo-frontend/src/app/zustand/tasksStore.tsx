@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { API_BASE_URL } from '../config/api';
 
 export interface Task {
   _id: string;
@@ -46,7 +47,7 @@ const tasksStore = create<TasksState>((set, get) => ({
   fetchTasks: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch('http://localhost:4000/tasks', {
+      const response = await fetch(`${API_BASE_URL}/tasks`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -70,7 +71,7 @@ const tasksStore = create<TasksState>((set, get) => ({
   fetchTaskById: async (id: string) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`http://localhost:4000/tasks/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -96,7 +97,7 @@ const tasksStore = create<TasksState>((set, get) => ({
   addTask: async (taskData: CreateTaskData) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch('http://localhost:4000/tasks', {
+      const response = await fetch(`${API_BASE_URL}/tasks`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -128,7 +129,7 @@ const tasksStore = create<TasksState>((set, get) => ({
     set({ loading: true, error: null });
     try {
       console.log('Updating task:', id, 'with data:', taskData);
-      const response = await fetch(`http://localhost:4000/tasks/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -160,7 +161,7 @@ const tasksStore = create<TasksState>((set, get) => ({
       console.error('Error updating task - Full error:', error);
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
         console.error('Network error - Check if backend is running and CORS is configured correctly');
-        throw new Error('Network error: Could not reach server. Make sure backend is running on http://localhost:4000');
+        throw new Error(`Network error: Could not reach server. Make sure backend is running on ${API_BASE_URL}`);
       }
       throw error;
     }
@@ -169,7 +170,7 @@ const tasksStore = create<TasksState>((set, get) => ({
   deleteTask: async (id: string) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`http://localhost:4000/tasks/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {

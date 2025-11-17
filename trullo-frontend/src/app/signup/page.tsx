@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./styles.module.css";
+import { API_BASE_URL } from "../config/api";
 
 type SignUpForm = {
     name: string;
@@ -17,7 +18,7 @@ const signUp = () => {
     const onSubmit: SubmitHandler<SignUpForm> = async (data: SignUpForm) => {
         try{
             const response = await fetch(
-                `http://localhost:4000/users/signup`,
+                `${API_BASE_URL}/users/signup`,
                 {
                     method: "POST",
                     headers: {

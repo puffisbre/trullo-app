@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./styles.module.css";
 import { useLoginStore } from "../zustand/loginContext";
+import { API_BASE_URL } from "../config/api";
 
 type LoginForm = {
     email: string;
@@ -18,7 +19,7 @@ const signIn = () => {
     const onSubmit: SubmitHandler<LoginForm> = async (data: LoginForm) => {
         try{
             const response = await fetch(
-                `http://localhost:4000/users/login`,
+                `${API_BASE_URL}/users/login`,
                 {
                     method: "POST",
                     headers: {

@@ -70,7 +70,7 @@ const dashboard = () => {
             let errorMessage = 'Unknown error';
             
             if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-                errorMessage = 'Network error: Could not reach server. Please check:\n1. Backend server is running on http://localhost:4000\n2. You are logged in (cookies are working)\n3. CORS is configured correctly';
+                errorMessage = 'Network error: Could not reach server. Please check:\n1. Backend server is running\n2. You are logged in (cookies are working)\n3. CORS is configured correctly';
             } else if (error instanceof Error) {
                 errorMessage = error.message;
             }

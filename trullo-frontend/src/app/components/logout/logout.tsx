@@ -1,6 +1,7 @@
 'use client'
 import { useRouter } from "next/navigation";
 import { useLoginStore } from "../../zustand/loginContext";
+import { API_BASE_URL } from "../../config/api";
 import styles from "./styles.module.css";
 
 const Logout = () => {
@@ -10,7 +11,7 @@ const Logout = () => {
     const handleLogout = async () => {
         try {
             const response = await fetch(
-                `http://localhost:4000/users/logout`,
+                `${API_BASE_URL}/users/logout`,
                 {
                     method: "POST",
                     credentials: 'include',
