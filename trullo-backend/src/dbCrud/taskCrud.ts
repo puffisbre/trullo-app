@@ -1,7 +1,7 @@
 import {Task, TaskInterface} from '../model/Task'
 import {Types} from 'mongoose'
 
-export const getTasks = (userId: string) => Task.find({ assignedTo: userId }).lean();
+export const getTasks = (userId: string) => Task.find({ assignedTo: { $in: [userId] } }).lean();
 
 export const getTasksByUserID = (filter: Record<string, unknown> = {}) => {
   return Task.find(filter).lean();

@@ -5,12 +5,18 @@ import { connectDB } from "./db/dbConnection.ts";
 import userRoutes from "./routes/userRoute.ts";
 import taskRoutes from './routes/taskRoutes.ts';
 import authUser from "./middlewares/authentication.ts";
+import cors from 'cors';
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
-
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use(cookieParser());
 
