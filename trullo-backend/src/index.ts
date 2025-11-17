@@ -16,15 +16,26 @@ const allowedOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
   : ['http://localhost:3000', 'https://trullo-app-pi.vercel.app'];
 
+console.log('CORS allowed origins:', allowedOrigins);
+console.log('FRONTEND_URL env:', process.env.FRONTEND_URL);
+
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('CORS: No origin header, allowing request');
+      return callback(null, true);
+    }
+    
+    console.log('CORS: Checking origin:', origin);
     
     if (allowedOrigins.includes(origin)) {
+      console.log('CORS: Origin allowed:', origin);
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.log('CORS: Origin NOT allowed:', origin);
+      console.log('CORS: Allowed origins are:', allowedOrigins);
+      callback(new Error(`Not allowed by CORS. Origin: ${origin}, Allowed: ${allowedOrigins.join(', ')}`));
     }
   },
   credentials: true,
