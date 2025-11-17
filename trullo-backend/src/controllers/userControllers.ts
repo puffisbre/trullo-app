@@ -67,12 +67,16 @@ export async function signIn(req: Request, res: Response){
           );
     
            
+        // Cookie configuration for cross-domain (production)
+        const isProduction = process.env.NODE_ENV === "production" || process.env.PORT !== undefined;
         res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 60 * 60 * 1000
-      });
+          httpOnly: true,
+          secure: isProduction, // true for HTTPS in production
+          sameSite: isProduction ? "none" : "lax", // "none" allows cross-domain cookies
+          maxAge: 60 * 60 * 1000, // 1 hour
+          domain: isProduction ? undefined : undefined, // Let browser handle domain
+          path: "/"
+        });
         return res.status(200).json({
             user: { 
                 _id: exsistingUser.id, 
@@ -90,10 +94,13 @@ export async function signIn(req: Request, res: Response){
 
 export async function signOut(req: Request, res: Response) {
     try {
+        // Cookie configuration for cross-domain (production)
+        const isProduction = process.env.NODE_ENV === "production" || process.env.PORT !== undefined;
         res.clearCookie("token", {
           httpOnly: true,
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-          secure: process.env.NODE_ENV === "production"
+          secure: isProduction,
+          sameSite: isProduction ? "none" : "lax",
+          path: "/"
         });
         return res.status(200).json({ message: "Logged out" });
       } catch (error) {
