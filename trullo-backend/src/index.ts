@@ -12,12 +12,17 @@ const app = express();
 const PORT = parseInt(process.env.PORT || '4000', 10);
 
 // CORS configuration - allow multiple origins
-const allowedOrigins = process.env.FRONTEND_URL 
+const defaultOrigins = ['http://localhost:3000', 'https://trullo-app-pi.vercel.app'];
+const envOrigins = process.env.FRONTEND_URL 
   ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-  : ['http://localhost:3000', 'https://trullo-app-pi.vercel.app'];
+  : [];
+
+// Always include Vercel URL in production, merge with env origins
+const allowedOrigins = [...new Set([...envOrigins, ...defaultOrigins])];
 
 console.log('CORS allowed origins:', allowedOrigins);
 console.log('FRONTEND_URL env:', process.env.FRONTEND_URL);
+console.log('NODE_ENV:', process.env.NODE_ENV);
 
 app.use(cors({
   origin: (origin, callback) => {
