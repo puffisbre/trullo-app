@@ -19,6 +19,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node src/index.ts",
+    "start": "ts-node src/index.ts",
     "seed": "ts-node --transpile-only src/seed.ts"
   },
   "keywords": [],
