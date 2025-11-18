@@ -67,14 +67,16 @@ export async function signIn(req: Request, res: Response){
           );
     
            
-        // Cookie configuration for cross-domain (production)
-        const isProduction = process.env.NODE_ENV === "production" || process.env.PORT !== undefined;
+        // Cookie configuration for cross-domain (Netlify Functions or production)
+        // Check if running on Netlify Functions (AWS_LAMBDA_FUNCTION_NAME) or production
+        const isNetlify = !!process.env.AWS_LAMBDA_FUNCTION_NAME || !!process.env.NETLIFY_DEV;
+        const isProduction = process.env.NODE_ENV === "production" || process.env.PORT !== undefined || isNetlify;
+        
         res.cookie("token", token, {
           httpOnly: true,
-          secure: isProduction, // true for HTTPS in production
-          sameSite: isProduction ? "none" : "lax", // "none" allows cross-domain cookies
+          secure: isProduction, // true for HTTPS in production/Netlify
+          sameSite: isProduction ? "none" : "lax", // "none" allows cross-domain cookies (Vercel -> Netlify)
           maxAge: 60 * 60 * 1000, // 1 hour
-          domain: isProduction ? undefined : undefined, // Let browser handle domain
           path: "/"
         });
         return res.status(200).json({
@@ -94,8 +96,10 @@ export async function signIn(req: Request, res: Response){
 
 export async function signOut(req: Request, res: Response) {
     try {
-        // Cookie configuration for cross-domain (production)
-        const isProduction = process.env.NODE_ENV === "production" || process.env.PORT !== undefined;
+        // Cookie configuration for cross-domain (Netlify Functions or production)
+        const isNetlify = !!process.env.AWS_LAMBDA_FUNCTION_NAME || !!process.env.NETLIFY_DEV;
+        const isProduction = process.env.NODE_ENV === "production" || process.env.PORT !== undefined || isNetlify;
+        
         res.clearCookie("token", {
           httpOnly: true,
           secure: isProduction,
