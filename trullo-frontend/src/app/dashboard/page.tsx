@@ -14,6 +14,7 @@ const dashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
     const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+    const [touchDrag, setTouchDrag] = useState<{ task: Task; startX: number; startY: number } | null>(null);
 
     useEffect(() => {
         fetchTasks();
@@ -79,6 +80,115 @@ const dashboard = () => {
             setDraggedTask(null);
         }
     };
+
+    // Touch event handlers for mobile drag-and-drop
+    const handleTouchStart = (task: Task, e: React.TouchEvent) => {
+        e.stopPropagation();
+        const touch = e.touches[0];
+        setTouchDrag({
+            task,
+            startX: touch.clientX,
+            startY: touch.clientY
+        });
+    };
+
+    // Set up global touch handlers when dragging
+    useEffect(() => {
+        if (!touchDrag) return;
+
+        const handleTouchMoveGlobal = (e: TouchEvent) => {
+            e.preventDefault(); // Prevent scrolling while dragging
+            const touch = e.touches[0];
+            
+            // Find element at touch position
+            const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (!elementAtPoint) return;
+
+            // Find the column or cardsContainer using data attributes
+            const column = elementAtPoint.closest('[data-status]') as HTMLElement;
+            const cardsContainer = elementAtPoint.closest(`.${styles.cardsContainer}`) as HTMLElement;
+            
+            // Remove dragOver class from all columns and containers
+            document.querySelectorAll('[data-status]').forEach((col) => {
+                col.classList.remove(styles.dragOver);
+            });
+            document.querySelectorAll(`.${styles.cardsContainer}`).forEach((container) => {
+                container.classList.remove(styles.dragOver);
+            });
+
+            // Add dragOver class to target
+            if (column) {
+                column.classList.add(styles.dragOver);
+                const cardsCont = column.querySelector(`.${styles.cardsContainer}`) as HTMLElement;
+                if (cardsCont) {
+                    cardsCont.classList.add(styles.dragOver);
+                }
+            } else if (cardsContainer) {
+                cardsContainer.classList.add(styles.dragOver);
+            }
+        };
+
+        const handleTouchEndGlobal = async (e: TouchEvent) => {
+            const touch = e.changedTouches[0];
+            const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            // Remove dragOver class from all elements
+            document.querySelectorAll('[data-status]').forEach((col) => {
+                col.classList.remove(styles.dragOver);
+            });
+            document.querySelectorAll(`.${styles.cardsContainer}`).forEach((container) => {
+                container.classList.remove(styles.dragOver);
+            });
+
+            if (!elementAtPoint) {
+                setTouchDrag(null);
+                return;
+            }
+
+            // Find the column
+            const column = elementAtPoint.closest(`.${styles.column}`) as HTMLElement;
+            if (!column) {
+                setTouchDrag(null);
+                return;
+            }
+
+            const newStatus = column.getAttribute('data-status') as 'to-do' | 'in progress' | 'blocked' | 'done';
+            
+            if (!newStatus || touchDrag.task.status === newStatus) {
+                setTouchDrag(null);
+                return;
+            }
+
+            try {
+                await updateTask(touchDrag.task._id, { 
+                    status: newStatus
+                });
+            } catch (error) {
+                console.error('Error updating task status:', error);
+                let errorMessage = 'Unknown error';
+                
+                if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Network error: Could not reach server.';
+                } else if (error instanceof Error) {
+                    errorMessage = error.message;
+                }
+                
+                alert(`Failed to update task status:\n${errorMessage}`);
+            } finally {
+                setTouchDrag(null);
+            }
+        };
+
+        document.addEventListener('touchmove', handleTouchMoveGlobal, { passive: false });
+        document.addEventListener('touchend', handleTouchEndGlobal);
+        document.addEventListener('touchcancel', handleTouchEndGlobal);
+
+        return () => {
+            document.removeEventListener('touchmove', handleTouchMoveGlobal);
+            document.removeEventListener('touchend', handleTouchEndGlobal);
+            document.removeEventListener('touchcancel', handleTouchEndGlobal);
+        };
+    }, [touchDrag, updateTask]);
 
     const tasksByStatus = {
         'to-do': tasks.filter((task: Task) => task.status === 'to-do'),
@@ -196,6 +306,7 @@ const dashboard = () => {
                                         key={task._id}
                                         task={task}
                                         onDragStart={() => handleDragStart(task)}
+                                        onTouchStart={(e) => handleTouchStart(task, e)}
                                         onEdit={handleOpenEditModal}
                                         onDelete={handleDeleteTask}
                                     />

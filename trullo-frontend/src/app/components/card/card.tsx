@@ -6,12 +6,13 @@ import { useUsersStore } from '../../zustand/usersStore';
 type CardType = {
   task: Task;
   onDragStart: () => void;
+  onTouchStart?: (e: React.TouchEvent) => void;
   onEdit: (task: Task) => void;
   onDelete: (taskId: string) => void;
 }
 
 const Card = (props: CardType) => {
-    const { task, onDragStart, onEdit, onDelete } = props;
+    const { task, onDragStart, onTouchStart, onEdit, onDelete } = props;
     const { getUserById } = useUsersStore();
     
     // Handle both array and single string (for backwards compatibility)
@@ -57,6 +58,7 @@ const Card = (props: CardType) => {
             draggable
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            onTouchStart={onTouchStart}
         >
            <div className={styles.cardHeader}>
                <h3 className={styles.cardTitle}>{task.title}</h3>
