@@ -9,5 +9,5 @@
       "resolveJsonModule": true,
       "noEmit": true
     },
-    "include": ["src", "src/types"]
+    "include": ["src", "src/types", "netlify"]
   }

@@ -55,17 +55,25 @@ app.use(cookieParser());
 app.use("/users", userRoutes);
 app.use("/tasks", authUser, taskRoutes);
 
-(async () => {
-  try {
-    await connectDB();
-    const host = '0.0.0.0'; // Listen on all interfaces for Docker/Render
-    app.listen(PORT, host, () => {
-      console.log(`Server is running on ${host}:${PORT}`);
-    });
-  } catch (err) {
-    console.error("Failed to start:", err);
-    process.exit(1);
-  }
-})();
+// Start server only if not running as Netlify Function
+if (process.env.NETLIFY_DEV !== 'true' && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  (async () => {
+    try {
+      await connectDB();
+      const host = '0.0.0.0'; // Listen on all interfaces for Docker/Render
+      app.listen(PORT, host, () => {
+        console.log(`Server is running on ${host}:${PORT}`);
+      });
+    } catch (err) {
+      console.error("Failed to start:", err);
+      process.exit(1);
+    }
+  })();
+}
+
+// Initialize DB connection for Netlify Functions
+if (process.env.NETLIFY_DEV === 'true' || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  connectDB().catch(console.error);
+}
 
 export default app;

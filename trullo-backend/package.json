@@ -11,6 +11,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.1",
     "nodemon": "^3.1.10",
+    "@netlify/serverless-http": "^3.3.1",
     "npm": "^11.6.0"
   },
   "name": "trullo-backend",
@@ -20,7 +21,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node src/index.ts",
     "start": "ts-node src/index.ts",
-    "seed": "ts-node --transpile-only src/seed.ts"
+    "seed": "ts-node --transpile-only src/seed.ts",
+    "build": "echo 'Netlify will build automatically'"
   },
   "keywords": [],
   "author": "",
