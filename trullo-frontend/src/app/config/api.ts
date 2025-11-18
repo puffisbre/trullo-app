@@ -1,2 +1,2 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trullo-app-1.onrender.com';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trullo-backend1.netlify.app';
 
