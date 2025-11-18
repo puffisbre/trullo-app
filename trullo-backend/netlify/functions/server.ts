@@ -1,4 +1,4 @@
-import serverless from '@netlify/serverless-http';
+import serverless from 'serverless-http';
 import app from '../../src/index.ts';
 import { connectDB } from '../../src/db/dbConnection.ts';
 
