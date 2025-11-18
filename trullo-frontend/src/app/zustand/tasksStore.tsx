@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { API_BASE_URL } from '../config/api';
+import { getAuthHeaders } from '../utils/authHeaders';
 
 export interface Task {
   _id: string;
@@ -50,9 +51,7 @@ const tasksStore = create<TasksState>((set, get) => ({
       const response = await fetch(`${API_BASE_URL}/tasks`, {
         method: 'GET',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {
@@ -74,9 +73,7 @@ const tasksStore = create<TasksState>((set, get) => ({
       const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
         method: 'GET',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {
@@ -100,9 +97,7 @@ const tasksStore = create<TasksState>((set, get) => ({
       const response = await fetch(`${API_BASE_URL}/tasks`, {
         method: 'POST',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(taskData),
       });
 
@@ -132,9 +127,7 @@ const tasksStore = create<TasksState>((set, get) => ({
       const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
         method: 'PATCH',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(taskData),
       });
 
@@ -173,9 +166,7 @@ const tasksStore = create<TasksState>((set, get) => ({
       const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
         method: 'DELETE',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {

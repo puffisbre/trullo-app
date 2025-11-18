@@ -41,8 +41,14 @@ const signIn = () => {
                 throw new Error("Invalid email or password");
               }
         
-              // Update login state in zustand store
-              login();
+              // Save token to store and localStorage (for Safari compatibility)
+              // Token is also sent as cookie, but Safari may block third-party cookies
+              const token = userData.token;
+              if (token) {
+                login(token);
+              } else {
+                login('');
+              }
         
               router.push("/dashboard");
         }catch(error){
