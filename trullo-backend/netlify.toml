@@ -6,10 +6,7 @@
 [functions]
   node_bundler = "esbuild"
 
-# Redirect all requests to the server function
-# Express app handles routing internally
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/server"
+  to = "/.netlify/functions/server/:splat"
   status = 200
-
