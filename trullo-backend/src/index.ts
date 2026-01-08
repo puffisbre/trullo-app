@@ -52,6 +52,19 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+// Add root route for health check
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "Trullo Backend API", 
+    status: "running",
+    version: "1.0.0",
+    endpoints: {
+      users: "/users",
+      tasks: "/tasks"
+    }
+  });
+});
+
 app.use("/users", userRoutes);
 app.use("/tasks", authUser, taskRoutes);
 
